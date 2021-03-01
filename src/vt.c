@@ -62,8 +62,8 @@ vt_Vector *vt_init(void)
         if (pthread_mutex_init(&vt->mutex, NULL) != 0) {
             int errnum = errno;
             #ifdef ALGOS_DEBUG
-                fprintf(stderr, "%s error: unable to initialize mutex. errorcode: %d\n",
-                        LOCATION, errnum);
+                fprintf(stderr, "%s() error: unable to initialize mutex. errorcode: %d\n",
+                        FUNC, errnum);
             #endif
             free(vt);
             return NULL;
@@ -86,8 +86,8 @@ void vt_destroy(vt_Vector *vt, vt_ElemDtor dtor)
         if (pthread_mutex_destroy(&vt->mutex) != 0) {
             int errnum = errno;
             #ifdef ALGOS_DEBUG
-                fprintf(stderr, "%s error: unable to destroy mutex. errorcode: %d\n",
-                        LOCATION, errnum);
+                fprintf(stderr, "%s() error: unable to destroy mutex. errorcode: %d\n",
+                        FUNC, errnum);
             #endif
         }
     #endif
@@ -127,7 +127,7 @@ void vt_add_at(vt_Vector *vt, const vt_Vector_Element elem, size_t pos)
         vt->size++;
     } else {
         #ifdef ALGOS_DEBUG
-            fprintf(stderr, "%s error: pos is out-of-bounds\n", LOCATION);
+            fprintf(stderr, "%s() error: pos is out-of-bounds\n", FUNC);
         #endif
     }
 
@@ -142,7 +142,7 @@ const vt_Vector_Element vt_get(vt_Vector *vt)
 
     if (vt_isempty(vt)) {
         #ifdef ALGOS_DEBUG
-            fprintf(stderr, "%s error: vector is empty\n", LOCATION);
+            fprintf(stderr, "%s() error: vector is empty\n", FUNC);
         #endif
         return NULL;
     }
@@ -170,7 +170,7 @@ const vt_Vector_Element vt_get_at(vt_Vector *vt, size_t pos)
         elem = vt->list[pos];
     } else {
         #ifdef ALGOS_DEBUG
-            fprintf(stderr, "%s error: pos is out-of-bounds\n", LOCATION);
+            fprintf(stderr, "%s() error: pos is out-of-bounds\n", FUNC);
         #endif
     }
 

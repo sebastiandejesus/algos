@@ -8,7 +8,7 @@
 #define ADDR               long long unsigned int
 #define INIT_LL_SIZE_VAL   0
 #define CONST_CAST(T, OBJ) (T)OBJ
-#define LOCATION __func__:__LINE__
+#define FUNC               __func__
 
 #ifdef SYNC
     #include <pthread.h>

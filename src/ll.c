@@ -101,8 +101,8 @@ ll_LinkedList *ll_init(ll_ListType type)
                 if (pthread_mutex_init(&ll->mutex, NULL) != 0) {
                     int errnum = errno;
                     #ifdef ALGOS_DEBUG
-                        fprintf(stderr, "%s error: unable to initialize mutex. errorcode: %d\n",
-                                LOCATION, errnum);
+                        fprintf(stderr, "%s() error: unable to initialize mutex. errorcode: %d\n",
+                                FUNC, errnum);
                     #endif
                     free(ll);
                     return NULL;
@@ -122,8 +122,8 @@ ll_LinkedList *ll_init(ll_ListType type)
                 if (pthread_mutex_init(&ll->mutex, NULL) != 0) {
                     int errnum = errno;
                     #ifdef ALGOS_DEBUG
-                        fprintf(stderr, "%s error: unable to initialize mutex. errorcode: %d\n",
-                                LOCATION, errnum);
+                        fprintf(stderr, "%s() error: unable to initialize mutex. errorcode: %d\n",
+                                FUNC, errnum);
                     #endif
                     free(ll);
                     return NULL;
@@ -145,8 +145,8 @@ ll_LinkedList *ll_init(ll_ListType type)
                 if (pthread_mutex_init(&ll->mutex, NULL) != 0) {
                     int errnum = errno;
                     #ifdef ALGOS_DEBUG
-                        fprintf(stderr, "%s error: unable to initialize mutex. errorcode: %d\n",
-                                LOCATION, errnum);
+                        fprintf(stderr, "%s() error: unable to initialize mutex. errorcode: %d\n",
+                                FUNC, errnum);
                     #endif
                     free(ll);
                     return NULL;
@@ -158,7 +158,7 @@ ll_LinkedList *ll_init(ll_ListType type)
             break;
         default:
             #ifdef ALGOS_DEBUG
-                fprintf(stderr, "%s error: invalid linkedlist type\n", LOCATION);
+                fprintf(stderr, "%s() error: invalid linkedlist type\n", FUNC);
             #endif
             break;
     }
@@ -211,7 +211,7 @@ void ll_destroy(ll_LinkedList *ll, ll_ElemDtor dtor)
             break;
         default:
             #ifdef ALGOS_DEBUG
-                fprintf(stderr, "%s error: invalid linkedlist type\n", LOCATION);
+                fprintf(stderr, "%s() error: invalid linkedlist type\n", FUNC);
             #endif
             return;
     }
@@ -219,8 +219,8 @@ void ll_destroy(ll_LinkedList *ll, ll_ElemDtor dtor)
         if (pthread_mutex_destroy(&ll->mutex) != 0) {
             int errnum = errno;
             #ifdef ALGOS_DEBUG
-                fprintf(stderr, "%s error: unable to destroy mutex. errorcode: %d\n",
-                        LOCATION, errnum);
+                fprintf(stderr, "%s() error: unable to destroy mutex. errorcode: %d\n",
+                        FUNC, errnum);
             #endif
         }
     #endif
@@ -316,7 +316,7 @@ int ll_insert(ll_LinkedList *ll, const void *elem)
             break;
          default:
             #ifdef ALGOS_DEBUG
-                fprintf(stderr, "%s error: invalid linkedlist type\n", LOCATION);
+                fprintf(stderr, "%s() error: invalid linkedlist type\n", FUNC);
             #endif
             return ERROR;
     }
@@ -400,7 +400,7 @@ int ll_insert_atend(ll_LinkedList *ll, const void *elem)
             break;
         default:
             #ifdef ALGOS_DEBUG
-                fprintf(stderr, "%s error: invalid linkedlist type\n", LOCATION);
+                fprintf(stderr, "%s() error: invalid linkedlist type\n", FUNC);
             #endif
             return ERROR;
     }
@@ -503,14 +503,14 @@ int ll_insert_before(ll_LinkedList *ll, const void *elem, const void *new_elem)
             break;
         default:
             #ifdef ALGOS_DEBUG
-                fprintf(stderr, "%s error: invalid linkedlist type\n", LOCATION);
+                fprintf(stderr, "%s() error: invalid linkedlist type\n", FUNC);
             #endif
             return ERROR;
     }
 
     if (!found) {
         #ifdef ALGOS_DEBUG
-            fprintf(stderr, "%s error: linkedlist elem not found\n", LOCATION);
+            fprintf(stderr, "%s() error: linkedlist elem not found\n", FUNC);
         #endif
         return NOTFOUND;
     }
@@ -612,14 +612,14 @@ int ll_insert_after(ll_LinkedList *ll, const void *elem, const void *new_elem)
             break;
         default:
             #ifdef ALGOS_DEBUG
-                fprintf(stderr, "%s error: invalid linkedlist type\n", LOCATION);
+                fprintf(stderr, "%s() error: invalid linkedlist type\n", FUNC);
             #endif
             return ERROR;
     }
 
     if (!found) {
         #ifdef ALGOS_DEBUG
-            fprintf(stderr, "%s error: linkedlist elem not found\n", LOCATION);
+            fprintf(stderr, "%s() error: linkedlist elem not found\n", FUNC);
         #endif
         return NOTFOUND;
     }
@@ -634,7 +634,7 @@ void *ll_get(const ll_LinkedList *ll)
 
     if (ll_islinkedlistempty(ll)) {
         #ifdef ALGOS_DEBUG
-            fprintf(stderr, "%s error: linkedlist is empty\n", LOCATION);
+            fprintf(stderr, "%s() error: linkedlist is empty\n", FUNC);
         #endif
         return NULL;
     }
@@ -661,7 +661,7 @@ void *ll_get(const ll_LinkedList *ll)
             break;
         default:
             #ifdef ALGOS_DEBUG
-                fprintf(stderr, "%s error: invalid linkedlist type\n", LOCATION);
+                fprintf(stderr, "%s() error: invalid linkedlist type\n", FUNC);
             #endif
             break;
     }
@@ -676,7 +676,7 @@ void *ll_get_atend(const ll_LinkedList *ll)
 
     if (ll_islinkedlistempty(ll)) {
         #ifdef ALGOS_DEBUG
-            fprintf(stderr, "%s error: linkedlist is empty\n", LOCATION);
+            fprintf(stderr, "%s() error: linkedlist is empty\n", FUNC);
         #endif
         return NULL;
     }
@@ -732,7 +732,7 @@ void *ll_get_atend(const ll_LinkedList *ll)
             break;
         default:
             #ifdef ALGOS_DEBUG
-                fprintf(stderr, "%s error: invalid linkedlist type\n", LOCATION);
+                fprintf(stderr, "%s() error: invalid linkedlist type\n", FUNC);
             #endif
             break;
     }
@@ -747,7 +747,7 @@ void *ll_get_before(const ll_LinkedList *ll, const void *elem)
 
     if (ll_islinkedlistempty(ll)) {
         #ifdef ALGOS_DEBUG
-            fprintf(stderr, "%s error: linkedlist is empty\n", LOCATION);
+            fprintf(stderr, "%s() error: linkedlist is empty\n", FUNC);
         #endif
         return NULL;
     }
@@ -815,7 +815,7 @@ void *ll_get_before(const ll_LinkedList *ll, const void *elem)
             break;
         default:
             #ifdef ALGOS_DEBUG
-                fprintf(stderr, "%s error: invalid linkedlist type\n", LOCATION);
+                fprintf(stderr, "%s() error: invalid linkedlist type\n", FUNC);
             #endif
             break;
     }
@@ -830,7 +830,7 @@ void *ll_get_after(const ll_LinkedList *ll, const void *elem)
 
     if (ll_islinkedlistempty(ll)) {
         #ifdef ALGOS_DEBUG
-            fprintf(stderr, "%s error: linkedlist is empty\n", LOCATION);
+            fprintf(stderr, "%s() error: linkedlist is empty\n", FUNC);
         #endif
         return NULL;
     }
@@ -898,7 +898,7 @@ void *ll_get_after(const ll_LinkedList *ll, const void *elem)
             break;
         default:
             #ifdef ALGOS_DEBUG
-                fprintf(stderr, "%s error: invalid linkedlist type\n", LOCATION);
+                fprintf(stderr, "%s() error: invalid linkedlist type\n", FUNC);
             #endif
             break;
     }
@@ -985,7 +985,7 @@ void ll_delete(ll_LinkedList *ll, const void *elem, ll_ElemDtor dtor)
             break;
         default:
             #ifdef ALGOS_DEBUG
-                fprintf(stderr, "%s error: invalid linkedlist type\n", LOCATION);
+                fprintf(stderr, "%s() error: invalid linkedlist type\n", FUNC);
             #endif
             break;
     }
@@ -1066,7 +1066,7 @@ void ll_delete_atend(ll_LinkedList *ll, ll_ElemDtor dtor)
             break;
         default:
             #ifdef ALGOS_DEBUG
-                fprintf(stderr, "%s error: invalid linkedlist type\n", LOCATION);
+                fprintf(stderr, "%s() error: invalid linkedlist type\n", FUNC);
             #endif
             break;
     }
@@ -1146,7 +1146,7 @@ void ll_delete_before(ll_LinkedList *ll, const void *elem, ll_ElemDtor dtor)
             break;
         default:
             #ifdef ALGOS_DEBUG
-                fprintf(stderr, "%s error: invalid linkedlist type\n", LOCATION);
+                fprintf(stderr, "%s() error: invalid linkedlist type\n", FUNC);
             #endif
             break;
     }
@@ -1232,7 +1232,7 @@ void ll_delete_after(ll_LinkedList *ll, const void *elem, ll_ElemDtor dtor)
             break;
         default:
             #ifdef ALGOS_DEBUG
-                fprintf(stderr, "%s error: invalid linkedlist type\n", LOCATION);
+                fprintf(stderr, "%s() error: invalid linkedlist type\n", FUNC);
             #endif
             break;
     }
@@ -1274,7 +1274,7 @@ int ll_insert_elementatpos(ll_LinkedList *ll, const void *elem, size_t pos)
                     }
                 } else {
                     #ifdef ALGOS_DEBUG
-                        fprintf(stderr, "%s error: pos is too high\n", LOCATION);
+                        fprintf(stderr, "%s() error: pos is too high\n", FUNC);
                     #endif
                 }
 
@@ -1312,7 +1312,7 @@ int ll_insert_elementatpos(ll_LinkedList *ll, const void *elem, size_t pos)
                     }
                 } else {
                     #ifdef ALGOS_DEBUG
-                        fprintf(stderr, "%s error: pos is too high\n", LOCATION);
+                        fprintf(stderr, "%s() error: pos is too high\n", FUNC);
                     #endif
                 }
 
@@ -1323,7 +1323,7 @@ int ll_insert_elementatpos(ll_LinkedList *ll, const void *elem, size_t pos)
             break;
         default:
             #ifdef ALGOS_DEBUG
-                fprintf(stderr, "%s error: invalid linkedlist type\n", LOCATION);
+                fprintf(stderr, "%s() error: invalid linkedlist type\n", FUNC);
             #endif
             break;
     }
@@ -1338,7 +1338,7 @@ void *ll_get_elementatpos(const ll_LinkedList *ll, size_t pos)
 
     if (ll_islinkedlistempty(ll)) {
         #ifdef ALGOS_DEBUG
-            fprintf(stderr, "%s error: linkedlist is empty\n", LOCATION);
+            fprintf(stderr, "%s() error: linkedlist is empty\n", FUNC);
         #endif
         return NULL;
     }
@@ -1361,7 +1361,7 @@ void *ll_get_elementatpos(const ll_LinkedList *ll, size_t pos)
                     }
                 } else {
                     #ifdef ALGOS_DEBUG
-                        fprintf(stderr, "%s error: pos is out-of-bounds\n", LOCATION);
+                        fprintf(stderr, "%s() error: pos is out-of-bounds\n", FUNC);
                     #endif
                 }
 
@@ -1386,7 +1386,7 @@ void *ll_get_elementatpos(const ll_LinkedList *ll, size_t pos)
                     }
                 } else {
                     #ifdef ALGOS_DEBUG
-                        fprintf(stderr, "%s error: pos is out-of-bounds\n", LOCATION);
+                        fprintf(stderr, "%s() error: pos is out-of-bounds\n", FUNC);
                     #endif
                 }
 
@@ -1397,7 +1397,7 @@ void *ll_get_elementatpos(const ll_LinkedList *ll, size_t pos)
             break;
         default:
             #ifdef ALGOS_DEBUG
-                fprintf(stderr, "%s error: invalid linkedlist type\n", LOCATION);
+                fprintf(stderr, "%s() error: invalid linkedlist type\n", FUNC);
             #endif
             break;
     }
@@ -1412,7 +1412,7 @@ void ll_delete_elementatpos(ll_LinkedList *ll, size_t pos, ll_ElemDtor dtor)
 
     if (ll_islinkedlistempty(ll)) {
         #ifdef ALGOS_DEBUG
-            fprintf(stderr, "%s error: linkedlist is empty\n", LOCATION);
+            fprintf(stderr, "%s() error: linkedlist is empty\n", FUNC);
         #endif
         return;
     }
@@ -1443,7 +1443,7 @@ void ll_delete_elementatpos(ll_LinkedList *ll, size_t pos, ll_ElemDtor dtor)
                         ll->size--;
                 } else {
                     #ifdef ALGOS_DEBUG
-                        fprintf(stderr, "%s error: pos is out-of-bounds\n", LOCATION);
+                        fprintf(stderr, "%s() error: pos is out-of-bounds\n", FUNC);
                     #endif
                 }
 
@@ -1477,7 +1477,7 @@ void ll_delete_elementatpos(ll_LinkedList *ll, size_t pos, ll_ElemDtor dtor)
                         ll->size--;
                 } else {
                     #ifdef ALGOS_DEBUG
-                        fprintf(stderr, "%s error: pos is out-of-bounds\n", LOCATION);
+                        fprintf(stderr, "%s() error: pos is out-of-bounds\n", FUNC);
                     #endif
                 }
 
@@ -1488,7 +1488,7 @@ void ll_delete_elementatpos(ll_LinkedList *ll, size_t pos, ll_ElemDtor dtor)
             break;
         default:
             #ifdef ALGOS_DEBUG
-                fprintf(stderr, "%s error: invalid linkedlist type\n", LOCATION);
+                fprintf(stderr, "%s() error: invalid linkedlist type\n", FUNC);
             #endif
             break;
     }
@@ -1523,7 +1523,7 @@ bool ll_islinkedlistempty(const ll_LinkedList *ll)
             break;
         default:
             #ifdef ALGOS_DEBUG
-                fprintf(stderr, "%s error: invalid linkedlist type\n", LOCATION);
+                fprintf(stderr, "%s() error: invalid linkedlist type\n", FUNC);
             #endif
             break;
     }
@@ -1618,7 +1618,7 @@ bool ll_search(const ll_LinkedList *ll, const void *elem)
             break;
         default:
             #ifdef ALGOS_DEBUG
-                fprintf(stderr, "%s error: invalid linkedlist type\n", LOCATION);
+                fprintf(stderr, "%s() error: invalid linkedlist type\n", FUNC);
             #endif
             break;
     }
@@ -1633,7 +1633,7 @@ bool ll_search_reverse(const ll_LinkedList *ll, const void *elem)
 
     if (ll_islinkedlistempty(ll)) {
         #ifdef ALGOS_DEBUG
-            fprintf(stderr, "%s error: linkedlist is empty\n", LOCATION);
+            fprintf(stderr, "%s() error: linkedlist is empty\n", FUNC);
         #endif
         return found;
     }
@@ -1669,7 +1669,7 @@ bool ll_search_reverse(const ll_LinkedList *ll, const void *elem)
             break;
         default:
             #ifdef ALGOS_DEBUG
-                fprintf(stderr, "%s error: invalid linkedlist type\n", LOCATION);
+                fprintf(stderr, "%s() error: invalid linkedlist type\n", FUNC);
             #endif
             break;
     }
@@ -1682,7 +1682,7 @@ void ll_reverse(ll_LinkedList *ll)
 
     if (ll_islinkedlistempty(ll)) {
         #ifdef ALGOS_DEBUG
-            fprintf(stderr, "%s error: linkedlist is empty\n", LOCATION);
+            fprintf(stderr, "%s() error: linkedlist is empty\n", FUNC);
         #endif
         return;
     }
@@ -1762,7 +1762,7 @@ void ll_reverse(ll_LinkedList *ll)
             break;
         default:
             #ifdef ALGOS_DEBUG
-                fprintf(stderr, "%s error: invalid linkedlist type\n", LOCATION);
+                fprintf(stderr, "%s() error: invalid linkedlist type\n", FUNC);
             #endif
             break;
     }
@@ -1790,7 +1790,7 @@ int ll_exchange(ll_LinkedList *ll, const void *elem1, const void *elem2)
 
     if (ll_islinkedlistempty(ll)) {
         #ifdef ALGOS_DEBUG
-            fprintf(stderr, "%s error: linkedlist is empty\n", LOCATION);
+            fprintf(stderr, "%s() error: linkedlist is empty\n", FUNC);
         #endif
         return rc;
     }
@@ -1882,13 +1882,13 @@ int ll_exchange(ll_LinkedList *ll, const void *elem1, const void *elem2)
             break;
         default:
             #ifdef ALGOS_DEBUG
-                fprintf(stderr, "%s error: invalid linkedlist type\n", LOCATION);
+                fprintf(stderr, "%s() error: invalid linkedlist type\n", FUNC);
             #endif
             break;
     }
     if (ERROR == rc) {
         #ifdef ALGOS_DEBUG
-            fprintf(stderr, "%s error: elements not found in linkedlist\n", LOCATION);
+            fprintf(stderr, "%s() error: elements not found in linkedlist\n", FUNC);
         #endif
     }
     return rc;
@@ -1953,7 +1953,7 @@ void ll_print(const ll_LinkedList *ll, ll_ElemPrint print)
             break;
         default:
             #ifdef ALGOS_DEBUG
-                fprintf(stderr, "%s error: invalid linkedlist type\n", LOCATION);
+                fprintf(stderr, "%s() error: invalid linkedlist type\n", FUNC);
             #endif
             break;
     }
@@ -1994,7 +1994,7 @@ void ll_print_reverse(const ll_LinkedList *ll, ll_ElemPrint print)
             break;
         default:
             #ifdef ALGOS_DEBUG
-                fprintf(stderr, "%s error: invalid linkedlist type\n", LOCATION);
+                fprintf(stderr, "%s() error: invalid linkedlist type\n", FUNC);
             #endif
             break;
     }
@@ -2133,7 +2133,7 @@ static void _merge(ll_LinkedList *ll, size_t min, size_t mid, size_t max, ll_Ele
             break;
         default:
             #ifdef ALGOS_DEBUG
-                fprintf(stderr, "%s error: invalid linkedlist type\n", LOCATION);
+                fprintf(stderr, "%s() error: invalid linkedlist type\n", FUNC);
             #endif
             break;
     }
