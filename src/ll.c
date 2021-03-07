@@ -1241,41 +1241,39 @@ void ll_delete_after(ll_LinkedList *ll, const void *elem, ll_ElemDtor dtor)
 int ll_insert_elementatpos(ll_LinkedList *ll, const void *elem, size_t pos)
 {
     int rc = ERROR;
-    bool found = false;
 
     assert(ll);
 
     switch (ll->type) {
         case ll_CIRCLY:
-        case ll_SINGLY:
             {
                 #ifdef SYNC
                     ll_LOCK(&ll->mutex);
                 #endif
 
-                if (pos <= ll->size) {
-                    int i;
-                    SinglyNode *node = NULL;
-                    SinglyNode *tmp = ll->s_head;
-                    for (i = -1; i < (ssize_t)ll->size; ++i) {
-                        if (i+1 == pos) {
-                            node = _init_singlynode(elem);
-                            node->elem = CONST_CAST(void*, elem);
-                            node->next = tmp->next->next;
-                            tmp->next = node;
-                            found = true;
-                        } 
-                        tmp = tmp->next;
-                    }
-
-                    if (found) {
-                        ll->size++;
-                        rc = SUCCESS;
-                    }
-                } else {
+                if (pos > ll->size) {
                     #ifdef ALGOS_DEBUG
                         fprintf(stderr, "%s() error: pos is too high\n", FUNC);
                     #endif
+                } else {
+                    SinglyNode *tmp = ll->s_head;
+                    SinglyNode *node = _init_singlynode(elem);
+
+                    if (pos == 0) {
+                        node->next = tmp->next;
+                        tmp->next = node;
+                    } else {
+                        while (--pos && tmp->next != ll->s_head)
+                            tmp = tmp->next;
+
+                        if (tmp->next == ll->s_head)
+                            return rc;
+
+                        node->next = tmp->next;
+                        tmp->next = node;
+                    }
+                    ll->size++;
+                    rc = SUCCESS;
                 }
 
                 #ifdef SYNC
@@ -1289,31 +1287,69 @@ int ll_insert_elementatpos(ll_LinkedList *ll, const void *elem, size_t pos)
                     ll_LOCK(&ll->mutex);
                 #endif
 
-                if (pos <= ll->size) {
-                    int i;
-                    DoublyNode *node = NULL;
-                    DoublyNode *tmp = ll->d_head;
-                    for (i = -1; i < (ssize_t)ll->size; ++i) {
-                        if (i+1 == pos) {
-                            node = _init_doublynode(elem);
-                            node->elem = CONST_CAST(void*, elem);
-                            node->next = tmp->next->next;
-                            node->prev = tmp;
-                            tmp->next->next->prev = node;
-                            tmp->next = node;
-                            found = true;
-                        } 
-                        tmp = tmp->next;
-                    }
-
-                    if (found) {
-                        ll->size++;
-                        rc = SUCCESS;
-                    }
-                } else {
+                if (pos > ll->size) {
                     #ifdef ALGOS_DEBUG
                         fprintf(stderr, "%s() error: pos is too high\n", FUNC);
                     #endif
+                } else {
+                    DoublyNode *tmp = ll->d_head;
+                    DoublyNode *node = _init_doublynode(elem);
+
+                    if (pos == 0) {
+                        node->next = tmp->next;
+                        node->prev = tmp;
+                        tmp->next->prev = node;
+                        tmp->next = node;
+                    } else {
+                        while (--pos && tmp != tmp->next)
+                            tmp = tmp->next;
+
+                        if (tmp == tmp->next)
+                            return rc;
+
+                        node->next = tmp->next;
+                        node->prev = tmp;
+                        tmp->next->prev = node;
+                        tmp->next = node;
+                    }
+                    ll->size++;
+                    rc = SUCCESS;
+                }
+
+                #ifdef SYNC
+                    ll_UNLOCK(&ll->mutex);
+                #endif
+            }
+            break;
+        case ll_SINGLY:
+            {
+                #ifdef SYNC
+                    ll_LOCK(&ll->mutex);
+                #endif
+
+                if (pos > ll->size) {
+                    #ifdef ALGOS_DEBUG
+                        fprintf(stderr, "%s() error: pos is too high\n", FUNC);
+                    #endif
+                } else {
+                    SinglyNode *tmp = ll->s_head;
+                    SinglyNode *node = _init_singlynode(elem);
+
+                    if (pos == 0) {
+                        node->next = tmp->next;
+                        tmp->next = node;
+                    } else {
+                        while (--pos && tmp != tmp->next)
+                            tmp = tmp->next;
+
+                        if (tmp == tmp->next)
+                            return rc;
+
+                        node->next = tmp->next;
+                        tmp->next = node;
+                    }
+                    ll->size++;
+                    rc = SUCCESS;
                 }
 
                 #ifdef SYNC
@@ -1345,24 +1381,29 @@ void *ll_get_elementatpos(const ll_LinkedList *ll, size_t pos)
 
     switch (ll->type) {
         case ll_CIRCLY:
-        case ll_SINGLY:
             {
                 #ifdef SYNC
                     ll_LOCK(&ll->mutex);
                 #endif
 
-                if (pos < ll->size) {
-                    int i;
-                    SinglyNode *tmp = ll->s_head->next;
-                    for (i = 0; i < ll->size; ++i) {
-                        if (i == pos)
-                            elem = tmp->elem;
-                        tmp = tmp->next;
-                    }
-                } else {
+                if (pos >= ll->size) {
                     #ifdef ALGOS_DEBUG
                         fprintf(stderr, "%s() error: pos is out-of-bounds\n", FUNC);
                     #endif
+                } else {
+                    SinglyNode *tmp = ll->s_head;
+
+                    if (pos == 0) {
+                        elem = tmp->next->elem;
+                    } else {
+                        while (--pos && tmp->next != ll->s_head)
+                            tmp = tmp->next;
+
+                        if (tmp->next == ll->s_head)
+                            return NULL;
+
+                        elem = tmp->elem;
+                    }
                 }
 
                 #ifdef SYNC
@@ -1376,18 +1417,55 @@ void *ll_get_elementatpos(const ll_LinkedList *ll, size_t pos)
                     ll_LOCK(&ll->mutex);
                 #endif
 
-                if (pos < ll->size) {
-                    int i;
-                    DoublyNode *tmp = ll->d_head->next;
-                    for (i = 0; i < ll->size; ++i) {
-                        if (i == pos)
-                            elem = tmp->elem;
-                        tmp = tmp->next;
-                    }
-                } else {
+                if (pos >= ll->size) {
                     #ifdef ALGOS_DEBUG
                         fprintf(stderr, "%s() error: pos is out-of-bounds\n", FUNC);
                     #endif
+                } else {
+                    DoublyNode *tmp = ll->d_head;
+
+                    if (pos == 0) {
+                        elem = tmp->next->elem;
+                    } else {
+                        while (--pos && tmp != tmp->next)
+                            tmp = tmp->next;
+
+                        if (tmp == tmp->next)
+                            return NULL;
+
+                        elem = tmp->elem;
+                    }
+                }
+
+                #ifdef SYNC
+                    ll_UNLOCK(&ll->mutex);
+                #endif
+            }
+            break;
+        case ll_SINGLY:
+            {
+                #ifdef SYNC
+                    ll_LOCK(&ll->mutex);
+                #endif
+
+                if (pos >= ll->size) {
+                    #ifdef ALGOS_DEBUG
+                        fprintf(stderr, "%s() error: pos is out-of-bounds\n", FUNC);
+                    #endif
+                } else {
+                    SinglyNode *tmp = ll->s_head;
+
+                    if (pos == 0) {
+                        elem = tmp->next->elem;
+                    } else {
+                        while (--pos && tmp != tmp->next)
+                            tmp = tmp->next;
+
+                        if (tmp == tmp->next)
+                            return NULL;
+
+                        elem = tmp->elem;
+                    }
                 }
 
                 #ifdef SYNC
@@ -1406,8 +1484,6 @@ void *ll_get_elementatpos(const ll_LinkedList *ll, size_t pos)
 
 void ll_delete_elementatpos(ll_LinkedList *ll, size_t pos, ll_ElemDtor dtor)
 {
-    bool found = false;
-
     assert(ll);
 
     if (ll_islinkedlistempty(ll)) {
@@ -1419,32 +1495,35 @@ void ll_delete_elementatpos(ll_LinkedList *ll, size_t pos, ll_ElemDtor dtor)
 
     switch (ll->type) {
         case ll_CIRCLY:
-        case ll_SINGLY:
             {
                 #ifdef SYNC
                     ll_LOCK(&ll->mutex);
                 #endif
 
-                if (pos < ll->size) {
-                    int i;
-                    SinglyNode *tmp = ll->s_head;
-                    SinglyNode *node = NULL;
-                    for (i = -1; i < (ssize_t)ll->size; ++i) {
-                        if (i+1 == pos) {
-                            node = tmp->next;
-                            tmp->next = tmp->next->next;
-                            _destroy_singlynode(node, dtor);
-                            found = true;
-                        } 
-                        tmp = tmp->next;
-                    }
-
-                    if (found)
-                        ll->size--;
-                } else {
+                if (pos >= ll->size) {
                     #ifdef ALGOS_DEBUG
                         fprintf(stderr, "%s() error: pos is out-of-bounds\n", FUNC);
                     #endif
+                } else {
+                    SinglyNode *tmp = ll->s_head;
+                    SinglyNode *node = NULL;
+
+                    if (pos == 0) {
+                        node = tmp->next;
+                        tmp->next = tmp->next->next;
+                        _destroy_singlynode(node, dtor);
+                    } else {
+                        while (--pos && tmp->next != ll->s_head)
+                            tmp = tmp->next;
+
+                        if (tmp->next != ll->s_head)
+                            return;
+
+                        node = tmp->next;
+                        tmp->next = tmp->next->next;
+                        _destroy_singlynode(node, dtor);
+                    }
+                    ll->size--;
                 }
 
                 #ifdef SYNC
@@ -1458,27 +1537,69 @@ void ll_delete_elementatpos(ll_LinkedList *ll, size_t pos, ll_ElemDtor dtor)
                     ll_LOCK(&ll->mutex);
                 #endif
 
-                if (pos < ll->size) {
-                    int i;
-                    DoublyNode *tmp = ll->d_head;
-                    DoublyNode *node = NULL;
-                    for (i = -1; i < (ssize_t)ll->size; ++i) {
-                        if (i+1 == pos) {
-                            node = tmp->next;
-                            tmp->next = tmp->next->next;
-                            tmp->next->next->prev = tmp;
-                            _destroy_doublynode(node, dtor);
-                            found = true;
-                        } 
-                        tmp = tmp->next;
-                    }
-
-                    if (found)
-                        ll->size--;
-                } else {
+                if (pos >= ll->size) {
                     #ifdef ALGOS_DEBUG
                         fprintf(stderr, "%s() error: pos is out-of-bounds\n", FUNC);
                     #endif
+                } else {
+                    DoublyNode *tmp = ll->d_head;
+                    DoublyNode *node = NULL;
+
+                    if (pos == 0) {
+                        node = tmp->next;
+                        tmp->next = tmp->next->next;
+                        tmp->next->next->prev = tmp;
+                        _destroy_doublynode(node, dtor);
+                    } else {
+                        while (--pos && tmp != tmp->next)
+                            tmp = tmp->next;
+
+                        if (tmp == tmp->next)
+                            return;
+
+                        node = tmp->next;
+                        tmp->next = tmp->next->next;
+                        tmp->next->next->prev = tmp;
+                        _destroy_doublynode(node, dtor);
+                    }
+                    ll->size--;
+                }
+
+                #ifdef SYNC
+                    ll_UNLOCK(&ll->mutex);
+                #endif
+            }
+            break;
+        case ll_SINGLY:
+            {
+                #ifdef SYNC
+                    ll_LOCK(&ll->mutex);
+                #endif
+
+                if (pos >= ll->size) {
+                    #ifdef ALGOS_DEBUG
+                        fprintf(stderr, "%s() error: pos is out-of-bounds\n", FUNC);
+                    #endif
+                } else {
+                    SinglyNode *tmp = ll->s_head;
+                    SinglyNode *node = NULL;
+
+                    if (pos == 0) {
+                        node = tmp->next;
+                        tmp->next = tmp->next->next;
+                        _destroy_singlynode(node, dtor);
+                    } else {
+                        while (--pos && tmp != tmp->next)
+                            tmp = tmp->next;
+
+                        if (tmp == tmp->next)
+                            return;
+
+                        node = tmp->next;
+                        tmp->next = tmp->next->next;
+                        _destroy_singlynode(node, dtor);
+                    }
+                    ll->size--;
                 }
 
                 #ifdef SYNC
@@ -1492,7 +1613,6 @@ void ll_delete_elementatpos(ll_LinkedList *ll, size_t pos, ll_ElemDtor dtor)
             #endif
             break;
     }
-
 }
 
 bool ll_islinkedlistempty(const ll_LinkedList *ll)
